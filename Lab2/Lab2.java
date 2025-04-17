@@ -1,7 +1,7 @@
 package Lab2;
 
 public class Lab2 {
-    public static int N = 10;
+    public static int N = 1000;
 
     public static void main(String[] args) {
         // Get program start time
