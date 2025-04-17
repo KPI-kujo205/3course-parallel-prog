@@ -1,9 +1,15 @@
 package Lab2;
+import java.util.Arrays;
 
 public class Lab2 {
-    public static int N = 1000;
+    public static int N = 12;
 
     public static void main(String[] args) {
+        // Validate that N is divisible by 4
+        if (N % 4 != 0) {
+            throw new IllegalArgumentException("N must be divisible by 4");
+        }
+            
         // Get program start time
         long startTime = System.currentTimeMillis();
 

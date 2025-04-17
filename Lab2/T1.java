@@ -12,66 +12,63 @@ public class T1 extends Thread {
         int size = Lab2.N/4;
         
         try {
-            // Initialize data (B, E)
+            // Input B, E
             Arrays.fill(Data.B, 1);
             Arrays.fill(Data.E, 1);
             
-            // Signal 
-            // Wait
+            // Signal T2, T3, T4 about input of B, E (S2.1, S3.1, S4.1)
             Data.B1.await();
 
-            // Compute partial dot product e1 = (B * C)
+            // Computation1 e1 = (BH * CH)
             int e1 = Data.computePartialDotProduct(Data.B, Data.C, startIdx, size);
             
-            // Add to shared e value
+            // Computation2 e = e + e1 (КД1)
             Data.eSem.acquire();
             Data.e.addAndGet(e1);
             Data.eSem.release();
             
-            // Compute D*(ME*MM) for this part
+            // Computation3 SH = sort(D * (ME * MMH))
             int[][] ME_MM = Data.multiplyMatricesBlock(Data.ME, Data.MM, startIdx, size);
             Data.multiplyVectorByMatrixPartial(Data.D, ME_MM, startIdx, size, Data.S);
-            
-            // Sort this part of S
             Arrays.sort(Data.S, startIdx, startIdx + size);
             
-            // Wait for T2 to complete its part
+            // Wait for computation of SH in T2 (W2.2)
             Data.Sem2_2.acquire();
             
-            // Merge first two parts
+            // Computation4 S2H = msort(SH, SH)
             Data.mergeSortedParts(Data.S, 0, Lab2.N/4, Lab2.N/2);
             
-            // Wait for T3 to complete its part
+            // Wait for computation of S2H in T3 (W3.2)
             Data.Sem3_2.acquire();
             
-            // Merge all parts
+            // Computation5 S = msort(S2H, S2H)
             Data.mergeSortedParts(Data.S, 0, Lab2.N/2, Lab2.N);
             
-            // Signal other threads about completion of sorting
+            // Signal T2, T3, T4 about computation of S (S2.2, S3.2, S4.2)
             Data.Sem1_2.release(3);
             
-            // Get shared values
+            // Copy e1 = e (КД2)
             Data.eSem.acquire();
             int e_val = Data.e.get();
             Data.eSem.release();
             
-            int x_val;       // КД3
+            int x_val;
             synchronized (Data.CS2) {
                 x_val = Data.x;
             }
             
-            // Compute final result Z = S + e*E*x
+            // Computation6 ZH = SH + e1 * EH * x1
             int[] eEx = new int[Lab2.N];
             Data.computePartialScalarVectorProduct(e_val * x_val, Data.E, startIdx, size, eEx);
             Data.addVectorsPartial(Data.S, eEx, startIdx, size, Data.Z);
             
-            // Final synchronization
-            Data.B1.await();
+            // Signal T4 about computation of ZH (S4.2)
+            Data.B2.await();
             
+            System.out.println("T1 finished execution");
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
         
-        System.out.println("T1 finished execution");
     }
 } 

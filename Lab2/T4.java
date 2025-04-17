@@ -55,16 +55,18 @@ public class T4 extends Thread {
             Data.computePartialScalarVectorProduct(e_val * x_val, Data.E, startIdx, size, eEx);
             Data.addVectorsPartial(Data.S, eEx, startIdx, size, Data.Z);
             
-            // Final synchronization (W1.2, W2.2, W3.2)
-            Data.B1.await();
+            // Final synchronization - wait for all threads to complete their computations (S4.2)
+            Data.B2.await();
             
             // Print the result
             Data.printResVectorZ(Data.Z);
-            
+
+
+            System.out.println("T4 finished execution");
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
         
-        System.out.println("T4 finished execution");
+        
     }
 } 
