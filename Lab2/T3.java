@@ -62,11 +62,9 @@ public class T3 extends Thread {
             Data.computePartialScalarVectorProduct(e_val * x_val, Data.E, startIdx, size, eEx);
             Data.addVectorsPartial(Data.S, eEx, startIdx, size, Data.Z);
             
-            // Final synchronization - wait for all threads to complete their computations (S4.2)
-            Data.B2.await();
-            
             System.out.println("T3 finished execution");
-
+            Data.t4Last.release(); // Signal that T3 is done
+            
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }

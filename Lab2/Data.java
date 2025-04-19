@@ -26,8 +26,8 @@ public class Data {
     public static Semaphore Sem2_2 = new Semaphore(0); // T2 -> T1 (S1.2)
     public static Semaphore Sem3_2 = new Semaphore(0); // T3 -> T1 (S1.2)
     public static Semaphore Sem4_2 = new Semaphore(0); // T4 -> T3 (S3.2)
-    
     public static Semaphore eSem = new Semaphore(1); // Semaphore for protecting e access
+    public static Semaphore t4Last = new Semaphore(0); // Ensure T4 finishes last
     
     public static CyclicBarrier B1 = new CyclicBarrier(4);
     public static CyclicBarrier B2 = new CyclicBarrier(4);

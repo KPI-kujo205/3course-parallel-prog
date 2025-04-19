@@ -57,15 +57,14 @@ public class T1 extends Thread {
                 x_val = Data.x;
             }
             
-            // Computation6 ZH = SH + e1 * EH * x1
+            // Compute final result Z = S + e*E*x
             int[] eEx = new int[Lab2.N];
             Data.computePartialScalarVectorProduct(e_val * x_val, Data.E, startIdx, size, eEx);
             Data.addVectorsPartial(Data.S, eEx, startIdx, size, Data.Z);
             
-            // Signal T4 about computation of ZH (S4.2)
-            Data.B2.await();
-            
             System.out.println("T1 finished execution");
+            Data.t4Last.release(); // Signal that T1 is done
+            
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
