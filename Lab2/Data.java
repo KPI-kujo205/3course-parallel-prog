@@ -22,10 +22,10 @@ public class Data {
     public static final Object CS2 = new Object(); // Critical section for x
     
     // Semaphores for synchronization
-    public static Semaphore Sem1_2 = new Semaphore(0); // T1 -> T2,T3,T4 (S2.2, S3.2, S4.2)
-    public static Semaphore Sem2_2 = new Semaphore(0); // T2 -> T1 (S1.2)
-    public static Semaphore Sem3_2 = new Semaphore(0); // T3 -> T1 (S1.2)
-    public static Semaphore Sem4_2 = new Semaphore(0); // T4 -> T3 (S3.2)
+    public static Semaphore Sem1_2 = new Semaphore(1); // T1 -> T2,T3,T4 (S2.2, S3.2, S4.2)
+    public static Semaphore Sem2_2 = new Semaphore(1); // T2 -> T1 (S1.2)
+    public static Semaphore Sem3_2 = new Semaphore(1); // T3 -> T1 (S1.2)
+    public static Semaphore Sem4_2 = new Semaphore(1); // T4 -> T3 (S3.2)
     public static Semaphore eSem = new Semaphore(1); // Semaphore for protecting e access
     public static Semaphore t4Last = new Semaphore(0); // Ensure T4 finishes last
     
