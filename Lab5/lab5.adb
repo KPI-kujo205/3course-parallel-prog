@@ -116,27 +116,27 @@ procedure Lab5 is
       pragma Storage_Size(2_147_483_648);
       entry X3h_fromT2(X3h_IN: in Vector_3H);
       entry MS2hFh_fromT3(MS2h_IN: in Matrix_2H; Fh_IN: in Vector_H);
-      --  entry a_fromT3(a_IN: in Integer);
-      --  entry Zh_fromT2(Zh_IN: in Vector_H);
-      --  entry Z4h_fromT3(Z4h_IN: in Vector_4H);
+      entry a_fromT3(a_IN: in Integer);
+      entry Zh_fromT2(Zh_IN: in Vector_H);
+      entry Z4h_fromT3(Z4h_IN: in Vector_4H);
    end T1;
 
    task T2 is
       pragma Storage_Size(2_147_483_648);
       entry MAMSh_fromT1(MA_IN: in Matrix_N; MSh_IN: in Matrix_H);
       entry Fh_fromT4(Fh_IN: in Vector_H);
-      --  entry a_fromT4(a_IN: in Integer);
+      entry a_fromT4(a_IN: in Integer);
    end T2;
 
    task T3 is
       pragma Storage_Size(2_147_483_648);
       entry MAX2h_fromT1(MA_IN: in Matrix_N; X2h_IN: in Vector_2H);
       entry F2h_fromT5(F2h_IN: in Vector_2H);
-      --  entry a1_fromT1(a1_IN: in Integer);
-      --  entry a5_fromT5(a5_IN: in Integer);
-      --  entry a_fromT4(a_IN: in Integer);
-      --  entry Z2h_fromT5(Z2h_IN: in Vector_2H);
-      --  entry Zh_fromT4(Zh_IN: in Vector_H);
+      entry a1_fromT1(a1_IN: in Integer);
+      entry a5_fromT5(a5_IN: in Integer);
+      entry a_fromT4(a_IN: in Integer);
+      entry Z2h_fromT5(Z2h_IN: in Vector_2H);
+      entry Zh_fromT4(Zh_IN: in Vector_H);
    end T3;
 
    task T4 is
@@ -144,24 +144,24 @@ procedure Lab5 is
       entry MAX2h_fromT2(MA_IN: in Matrix_N; X2h_IN: in Vector_2H);
       entry MSh_fromT3(MSh_IN: in Matrix_H);
       entry F2h_fromT6(F2h_IN: in Vector_2H);
-      --  entry a2_fromT2(a2_IN: in Integer);
-      --  entry a6_fromT6(a6_IN: in Integer);
-      --  entry a3_fromT3(a3_IN: in Integer);
+      entry a2_fromT2(a2_IN: in Integer);
+      entry a6_fromT6(a6_IN: in Integer);
+      entry a3_fromT3(a3_IN: in Integer);
    end T4;
 
    task T5 is
       pragma Storage_Size(2_147_483_648);
       entry MAMS2hXh_fromT3(MA_IN: in Matrix_N; MS2h_IN: in Matrix_2H; Xh_IN: in Vector_H);
       entry F3h_fromT6(F3h_IN: in Vector_3H);
-      --  entry a_fromT3(a_IN: in Integer);
-      --  entry Zh_fromT6(Zh_IN: in Vector_H);
+      entry a_fromT3(a_IN: in Integer);
+      entry Zh_fromT6(Zh_IN: in Vector_H);
    end T5;
 
    task T6 is
       pragma Storage_Size(2_147_483_648);
       entry MAXh_fromT4(MA_IN: in Matrix_N; Xh_IN: in Vector_H);
       entry MAMSh_fromT5(MA_IN: in Matrix_N; MSh_IN: in Matrix_H);
-      --  entry a_fromT4(a_IN: in Integer);
+      entry a_fromT4(a_IN: in Integer);
    end T6;
 
    -- Task bodies
@@ -177,50 +177,79 @@ procedure Lab5 is
       Z4h: Vector_4H;
    begin
       Put_Line("Task T1 is started");
+
       -- Введення MA
+      Put_Line("T1: Initializing MA");
       MA := Fill_Matrix;
+      Put_Line("T1: MA initialized");
 
       -- Прийняти дані від задачі T2: X3H
+      Put_Line("T1: Waiting for X3h_fromT2");
       accept X3h_fromT2(X3h_IN: in Vector_3H) do
          X3h := X3h_IN;
       end X3h_fromT2;
+      Put_Line("T1: Received X3h_fromT2");
 
       -- Передати дані задачі T2: MA, MSН
+      Put_Line("T1: Sending MAMSh_fromT1 to T2");
       T2.MAMSh_fromT1(MA, (for I in 1..N => MS2h(I)(1..H)));
+      Put_Line("T1: Sent MAMSh_fromT1 to T2");
 
       -- Прийняти дані від задачі T3: MS2Н, FН
+      Put_Line("T1: Waiting for MS2hFh_fromT3");
       accept MS2hFh_fromT3(MS2h_IN: in Matrix_2H; Fh_IN: in Vector_H) do
          MS2h := MS2h_IN;
          Fh := Fh_IN;
       end MS2hFh_fromT3;
+      Put_Line("T1: Received MS2hFh_fromT3");
 
       -- Передати дані задачі T3: MA, X2H
+      Put_Line("T1: Sending MAX2h_fromT1 to T3");
       T3.MAX2h_fromT1(MA, X3h(1..2*H));
+      Put_Line("T1: Sent MAX2h_fromT1 to T3");
 
       -- Обчислення1: a1 = min(XН)
-      --  a1 := Find_Min(X3h(1..H));
+      Put_Line("T1: Calculating a1 = min(XH)");
+      a1 := Find_Min(X3h(1..H));
+      Put_Line("T1: a1 calculated: " & Integer'Image(a1));
+
       -- Передати a1 дані задачі T3
-      --  T3.a1_fromT1(a1);
+      Put_Line("T1: Sending a1 to T3");
+      T3.a1_fromT1(a1);
+      Put_Line("T1: Sent a1 to T3");
+
       -- Прийняти a від задачі T3
-      --  accept a_fromT3(a_IN: in Integer) do
-      --     a := a_IN;
-      --  end a_fromT3;
+      Put_Line("T1: Waiting for a_fromT3");
+      accept a_fromT3(a_IN: in Integer) do
+         a := a_IN;
+      end a_fromT3;
+      Put_Line("T1: Received a_fromT3: " & Integer'Image(a));
+
       -- Обчислення3: ZН = X * (MA * MSН) + a * FН
-      --  Z(1..H) := Calculate_Zh(X3h(1..H), MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh);
+      Put_Line("T1: Calculating Z(1..H)");
+      Z(1..H) := Calculate_Zh(X3h(1..H), MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh);
+      Put_Line("T1: Z(1..H) calculated");
+
       -- Прийняти Z4H від задачі T3
-      --  accept Z4h_fromT3(Z4h_IN: in Vector_4H) do
-      --     Z4h := Z4h_IN;
-      --  end Z4h_fromT3;
+      Put_Line("T1: Waiting for Z4h_fromT3");
+      accept Z4h_fromT3(Z4h_IN: in Vector_4H) do
+         Z4h := Z4h_IN;
+      end Z4h_fromT3;
+      Put_Line("T1: Received Z4h_fromT3");
+
       -- Прийняти ZH від задачі T2
-      --  accept Zh_fromT2(Zh_IN: in Vector_H) do
-      --     Zh := Zh_IN;
-      --  end Zh_fromT2;
+      Put_Line("T1: Waiting for Zh_fromT2");
+      accept Zh_fromT2(Zh_IN: in Vector_H) do
+         Zh := Zh_IN;
+      end Zh_fromT2;
+      Put_Line("T1: Received Zh_fromT2");
+
       -- Виведення Z
-      --  Put_Line("Result vector Z:");
-      --  for I in 1..N loop
-      --     Put(Integer'Image(Z(I)));
-      --  end loop;
-      New_Line;
+      Put_Line("Result vector Z:");
+      for I in 1..N loop
+         Put(Integer'Image(Z(I)));
+      end loop;
+      Put_Line("");
       Put_Line("Task T1 is finished");
    end T1;
 
@@ -233,33 +262,64 @@ procedure Lab5 is
       Zh: Vector_H;
    begin
       Put_Line("Task T2 is started");
+
       -- Введення X
+      Put_Line("T2: Initializing X");
       X := Fill_Vector;
+      Put_Line("T2: X initialized");
+
       -- Передати дані задачі T1: X3H
+      Put_Line("T2: Sending X3h_fromT2 to T1");
       T1.X3h_fromT2(X(1..3*H));
+      Put_Line("T2: Sent X3h_fromT2 to T1");
+
       -- Прийняти дані від задачі T1: MA, MSН
+      Put_Line("T2: Waiting for MAMSh_fromT1");
       accept MAMSh_fromT1(MA_IN: in Matrix_N; MSh_IN: in Matrix_H) do
          MA := MA_IN;
          MSh := MSh_IN;
       end MAMSh_fromT1;
+      Put_Line("T2: Received MAMSh_fromT1");
+
       -- Прийняти дані від задачі T4: FН
+      Put_Line("T2: Waiting for Fh_fromT4");
       accept Fh_fromT4(Fh_IN: in Vector_H) do
          Fh := Fh_IN;
       end Fh_fromT4;
+      Put_Line("T2: Received Fh_fromT4");
+
       -- Передати дані задачі T4: X2H, MA
+      Put_Line("T2: Sending MAX2h_fromT2 to T4");
       T4.MAX2h_fromT2(MA, X(1..2*H));
+      Put_Line("T2: Sent MAX2h_fromT2 to T4");
+
       -- Обчислення1: a2 = min(XН)
-      --  a2 := Find_Min(X(1..H));
+      Put_Line("T2: Calculating a2 = min(XH)");
+      a2 := Find_Min(X(1..H));
+      Put_Line("T2: a2 calculated: " & Integer'Image(a2));
+
       -- Передати a2 дані задачі T4
-      --  T4.a2_fromT2(a2);
+      Put_Line("T2: Sending a2 to T4");
+      T4.a2_fromT2(a2);
+      Put_Line("T2: Sent a2 to T4");
+
       -- Прийняти a від задачі T4
-      --  accept a_fromT4(a_IN: in Integer) do
-      --     a := a_IN;
-      --  end a_fromT4;
+      Put_Line("T2: Waiting for a_fromT4");
+      accept a_fromT4(a_IN: in Integer) do
+         a := a_IN;
+      end a_fromT4;
+      Put_Line("T2: Received a_fromT4: " & Integer'Image(a));
+
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
-      --  Zh := Calculate_Zh(X, MA, MSh, a, Fh);
+      Put_Line("T2: Calculating Zh");
+      Zh := Calculate_Zh(X, MA, MSh, a, Fh);
+      Put_Line("T2: Zh calculated");
+
       -- Передати Zh задачі T1
-      --  T1.Zh_fromT2(Zh);
+      Put_Line("T2: Sending Zh to T1");
+      T1.Zh_fromT2(Zh);
+      Put_Line("T2: Sent Zh to T1");
+
       Put_Line("Task T2 is finished");
    end T2;
 
@@ -273,55 +333,115 @@ procedure Lab5 is
       Zh: Vector_H;
    begin
       Put_Line("Task T3 is started");
+
       -- Введення MS
+      Put_Line("T3: Initializing MS");
       MS := Fill_Matrix;
+      Put_Line("T3: MS initialized");
+
       -- Передати дані задачі T1: MS2Н, FН
+      Put_Line("T3: Sending MS2hFh_fromT3 to T1");
       T1.MS2hFh_fromT3((for I in 1..N => MS(I)(1..2*H)), F2h(1..H));
+      Put_Line("T3: Sent MS2hFh_fromT3 to T1");
+
       -- Прийняти дані від задачі T1: MA, X2H
+      Put_Line("T3: Waiting for MAX2h_fromT1");
       accept MAX2h_fromT1(MA_IN: in Matrix_N; X2h_IN: in Vector_2H) do
          MA := MA_IN;
          X2h := X2h_IN;
       end MAX2h_fromT1;
+      Put_Line("T3: Received MAX2h_fromT1");
+
       -- Прийняти дані від задачі T5: F2Н
+      Put_Line("T3: Waiting for F2h_fromT5");
       accept F2h_fromT5(F2h_IN: in Vector_2H) do
          F2h := F2h_IN;
       end F2h_fromT5;
+      Put_Line("T3: Received F2h_fromT5");
+
       -- Передати дані задачі T5: MA, MS2H, XH
+      Put_Line("T3: Sending MAMS2hXh_fromT3 to T5");
       T5.MAMS2hXh_fromT3(MA, (for I in 1..N => MS(I)(1..2*H)), X2h(1..H));
+      Put_Line("T3: Sent MAMS2hXh_fromT3 to T5");
+
       -- Передати дані задачі T4: MSH
+      Put_Line("T3: Sending MSh_fromT3 to T4");
       T4.MSh_fromT3((for I in 1..N => MS(I)(1..H)));
+      Put_Line("T3: Sent MSh_fromT3 to T4");
+
       -- Обчислення1: a3 = min(XН)
-      --  a3 := Find_Min(X2h(1..H));
+      Put_Line("T3: Calculating a3 = min(XH)");
+      a3 := Find_Min(X2h(1..H));
+      Put_Line("T3: a3 calculated: " & Integer'Image(a3));
+
       -- Прийняти a1 від задачі T1
-      --  accept a1_fromT1(a1_IN: in Integer) do
-      --     a1 := a1_IN;
-      --  end a1_fromT1;
+      Put_Line("T3: Waiting for a1_fromT1");
+      accept a1_fromT1(a1_IN: in Integer) do
+         a1 := a1_IN;
+      end a1_fromT1;
+      Put_Line("T3: Received a1_fromT1: " & Integer'Image(a1));
+
       -- Обчислення2: a3 = min(a3, a1)
-      --  a3 := Integer'Min(a3, a1);
+      a3 := Integer'Min(a3, a1);
+      Put_Line("T3: a3 updated after min with a1: " & Integer'Image(a3));
+
       -- Прийняти a5 від задачі T5
-      --  accept a5_fromT5(a5_IN: in Integer) do
-      --     a5 := a5_IN;
-      --  end a5_fromT5;
+      Put_Line("T3: Waiting for a5_fromT5");
+      accept a5_fromT5(a5_IN: in Integer) do
+         a5 := a5_IN;
+      end a5_fromT5;
+      Put_Line("T3: Received a5_fromT5: " & Integer'Image(a5));
+
       -- Обчислення2: a3 = min(a3, a5)
-      --  a3 := Integer'Min(a3, a5);
+      a3 := Integer'Min(a3, a5);
+      Put_Line("T3: a3 updated after min with a5: " & Integer'Image(a3));
+
       -- Передати a3 задачі T4
-      --  T4.a3_fromT3(a3);
+      Put_Line("T3: Sending a3 to T4");
+      T4.a3_fromT3(a3);
+      Put_Line("T3: Sent a3 to T4");
+
       -- Прийняти a від задачі T4
-      --  accept a_fromT4(a_IN: in Integer) do
-      --     a := a_IN;
-      --  end a_fromT4;
+      Put_Line("T3: Waiting for a_fromT4");
+      accept a_fromT4(a_IN: in Integer) do
+         a := a_IN;
+      end a_fromT4;
+      Put_Line("T3: Received a_fromT4: " & Integer'Image(a));
+
+      -- Передати a задачі T1
+      Put_Line("T3: Sending a to T1");
+      T1.a_fromT3(a);
+      Put_Line("T3: Sent a to T1");
+
+      -- Передати a задачі T5
+      Put_Line("T3: Sending a to T5");
+      T5.a_fromT3(a);
+      Put_Line("T3: Sent a to T5");
+
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
-      --  Zh := Calculate_Zh(X2h, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H));
+      Put_Line("T3: Calculating Zh");
+      Zh := Calculate_Zh(X2h, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H));
+      Put_Line("T3: Zh calculated");
+
       -- Прийняти Z2H від задачі T5
-      --  accept Z2h_fromT5(Z2h_IN: in Vector_2H) do
-      --     Z2h := Z2h_IN;
-      --  end Z2h_fromT5;
+      Put_Line("T3: Waiting for Z2h_fromT5");
+      accept Z2h_fromT5(Z2h_IN: in Vector_2H) do
+         Z2h := Z2h_IN;
+      end Z2h_fromT5;
+      Put_Line("T3: Received Z2h_fromT5");
+
       -- Прийняти Zh від задачі T4
-      --  accept Zh_fromT4(Zh_IN: in Vector_H) do
-      --     Zh := Zh_IN;
-      --  end Zh_fromT4;
+      Put_Line("T3: Waiting for Zh_fromT4");
+      accept Zh_fromT4(Zh_IN: in Vector_H) do
+         Zh := Zh_IN;
+      end Zh_fromT4;
+      Put_Line("T3: Received Zh_fromT4");
+
       -- Передати Z4H задачі T1
-      --  T1.Z4h_fromT3((Z2h & Zh));
+      Put_Line("T3: Sending Z4h_fromT3 to T1");
+      T1.Z4h_fromT3((Z2h & Zh));
+      Put_Line("T3: Sent Z4h_fromT3 to T1");
+
       Put_Line("Task T3 is finished");
    end T3;
 
@@ -334,53 +454,102 @@ procedure Lab5 is
       Zh: Vector_H;
    begin
       Put_Line("Task T4 is started");
+
       -- Передати дані задачі T2: FН
+      Put_Line("T4: Sending Fh_fromT4 to T2");
       T2.Fh_fromT4(F2h(1..H));
+      Put_Line("T4: Sent Fh_fromT4 to T2");
+
       -- Прийняти дані від задачі T2: MA, X2H
+      Put_Line("T4: Waiting for MAX2h_fromT2");
       accept MAX2h_fromT2(MA_IN: in Matrix_N; X2h_IN: in Vector_2H) do
          MA := MA_IN;
          X2h := X2h_IN;
       end MAX2h_fromT2;
+      Put_Line("T4: Received MAX2h_fromT2");
+
       -- Прийняти дані від задачі T3: MSН
+      Put_Line("T4: Waiting for MSh_fromT3");
       accept MSh_fromT3(MSh_IN: in Matrix_H) do
          MSh := MSh_IN;
       end MSh_fromT3;
+      Put_Line("T4: Received MSh_fromT3");
+
       -- Прийняти дані від задачі T6: F2H
+      Put_Line("T4: Waiting for F2h_fromT6");
       accept F2h_fromT6(F2h_IN: in Vector_2H) do
          F2h := F2h_IN;
       end F2h_fromT6;
+      Put_Line("T4: Received F2h_fromT6");
+
       -- Передати дані задачі T6: XH
+      Put_Line("T4: Sending MAXh_fromT4 to T6");
       T6.MAXh_fromT4(MA, X2h(1..H));
+      Put_Line("T4: Sent MAXh_fromT4 to T6");
+
       -- Обчислення1: a4 = min(XН)
-      --  a4 := Find_Min(X2h(1..H));
+      Put_Line("T4: Calculating a4 = min(XH)");
+      a4 := Find_Min(X2h(1..H));
+      Put_Line("T4: a4 calculated: " & Integer'Image(a4));
+
       -- Прийняти a2 від задачі T2
-      --  accept a2_fromT2(a2_IN: in Integer) do
-      --     a2 := a2_IN;
-      --  end a2_fromT2;
+      Put_Line("T4: Waiting for a2_fromT2");
+      accept a2_fromT2(a2_IN: in Integer) do
+         a2 := a2_IN;
+      end a2_fromT2;
+      Put_Line("T4: Received a2_fromT2: " & Integer'Image(a2));
+
       -- Обчислення2: a4 = min(a4, a2)
-      --  a4 := Integer'Min(a4, a2);
+      a4 := Integer'Min(a4, a2);
+      Put_Line("T4: a4 updated after min with a2: " & Integer'Image(a4));
+
       -- Прийняти a6 від задачі T6
-      --  accept a6_fromT6(a6_IN: in Integer) do
-      --     a6 := a6_IN;
-      --  end a6_fromT6;
+      Put_Line("T4: Waiting for a6_fromT6");
+      accept a6_fromT6(a6_IN: in Integer) do
+         a6 := a6_IN;
+      end a6_fromT6;
+      Put_Line("T4: Received a6_fromT6: " & Integer'Image(a6));
+
       -- Обчислення2: a4 = min(a4, a6)
-      --  a4 := Integer'Min(a4, a6);
+      a4 := Integer'Min(a4, a6);
+      Put_Line("T4: a4 updated after min with a6: " & Integer'Image(a4));
+
       -- Прийняти a3 від задачі T3
-      --  accept a3_fromT3(a3_IN: in Integer) do
-      --     a3 := a3_IN;
-      --  end a3_fromT3;
+      Put_Line("T4: Waiting for a3_fromT3");
+      accept a3_fromT3(a3_IN: in Integer) do
+         a3 := a3_IN;
+      end a3_fromT3;
+      Put_Line("T4: Received a3_fromT3: " & Integer'Image(a3));
+
       -- Обчислення2: a = min(a4, a3)
-      --  a := Integer'Min(a4, a3);
+      a := Integer'Min(a4, a3);
+      Put_Line("T4: a calculated: " & Integer'Image(a));
+
       -- Передати a задачі T2
-      --  T2.a_fromT4(a);
+      Put_Line("T4: Sending a to T2");
+      T2.a_fromT4(a);
+      Put_Line("T4: Sent a to T2");
+
       -- Передати a задачі T3
-      --  T3.a_fromT4(a);
+      Put_Line("T4: Sending a to T3");
+      T3.a_fromT4(a);
+      Put_Line("T4: Sent a to T3");
+
       -- Передати a задачі T6
-      --  T6.a_fromT4(a);
+      Put_Line("T4: Sending a to T6");
+      T6.a_fromT4(a);
+      Put_Line("T4: Sent a to T6");
+
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
-      --  Zh := Calculate_Zh(X2h, MA, MSh, a, F2h(1..H));
+      Put_Line("T4: Calculating Zh");
+      Zh := Calculate_Zh(X2h, MA, MSh, a, F2h(1..H));
+      Put_Line("T4: Zh calculated");
+
       -- Передати Zh задачі T3
-      --  T3.Zh_fromT4(Zh);
+      Put_Line("T4: Sending Zh to T3");
+      T3.Zh_fromT4(Zh);
+      Put_Line("T4: Sent Zh to T3");
+
       Put_Line("Task T4 is finished");
    end T4;
 
@@ -393,36 +562,67 @@ procedure Lab5 is
       Zh: Vector_H;
    begin
       Put_Line("Task T5 is started");
+
       -- Передати дані задачі T3: F2H
+      Put_Line("T5: Sending F2h_fromT5 to T3");
       T3.F2h_fromT5(F3h(1..2*H));
+      Put_Line("T5: Sent F2h_fromT5 to T3");
+
       -- Прийняти дані від задачі T3: MA, MS2H, XH
+      Put_Line("T5: Waiting for MAMS2hXh_fromT3");
       accept MAMS2hXh_fromT3(MA_IN: in Matrix_N; MS2h_IN: in Matrix_2H; Xh_IN: in Vector_H) do
          MA := MA_IN;
          MS2h := MS2h_IN;
          Xh := Xh_IN;
       end MAMS2hXh_fromT3;
+      Put_Line("T5: Received MAMS2hXh_fromT3");
+
       -- Прийняти дані від задачі T6: F3H
+      Put_Line("T5: Waiting for F3h_fromT6");
       accept F3h_fromT6(F3h_IN: in Vector_3H) do
          F3h := F3h_IN;
       end F3h_fromT6;
+      Put_Line("T5: Received F3h_fromT6");
+
       -- Передати дані задачі T6: MSH, MA
+      Put_Line("T5: Sending MAMSh_fromT5 to T6");
       T6.MAMSh_fromT5(MA, (for I in 1..N => MS2h(I)(1..H)));
+      Put_Line("T5: Sent MAMSh_fromT5 to T6");
+
       -- Обчислення1: a5 = min(XН)
-      --  a5 := Find_Min(Xh);
+      Put_Line("T5: Calculating a5 = min(XH)");
+      a5 := Find_Min(Xh);
+      Put_Line("T5: a5 calculated: " & Integer'Image(a5));
+
       -- Передати a5 дані задачі T3
-      --  T3.a5_fromT5(a5);
+      Put_Line("T5: Sending a5 to T3");
+      T3.a5_fromT5(a5);
+      Put_Line("T5: Sent a5 to T3");
+
       -- Прийняти a від задачі T3
-      --  accept a_fromT3(a_IN: in Integer) do
-      --     a := a_IN;
-      --  end a_fromT3;
+      Put_Line("T5: Waiting for a_fromT3");
+      accept a_fromT3(a_IN: in Integer) do
+         a := a_IN;
+      end a_fromT3;
+      Put_Line("T5: Received a_fromT3: " & Integer'Image(a));
+
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
-      --  Zh := Calculate_Zh(Xh, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H));
+      Put_Line("T5: Calculating Zh");
+      Zh := Calculate_Zh(Xh, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H));
+      Put_Line("T5: Zh calculated");
+
       -- Прийняти Zh від задачі T6
-      --  accept Zh_fromT6(Zh_IN: in Vector_H) do
-      --     Zh := Zh_IN;
-      --  end Zh_fromT6;
+      Put_Line("T5: Waiting for Zh_fromT6");
+      accept Zh_fromT6(Zh_IN: in Vector_H) do
+         Zh := Zh_IN;
+      end Zh_fromT6;
+      Put_Line("T5: Received Zh_fromT6");
+
       -- Передати Z2H задачі T3
-      --  T3.Z2h_fromT5((Zh & Zh));
+      Put_Line("T5: Sending Z2h_fromT5 to T3");
+      T3.Z2h_fromT5((Zh & Zh));
+      Put_Line("T5: Sent Z2h_fromT5 to T3");
+
       Put_Line("Task T5 is finished");
    end T5;
 
@@ -435,34 +635,65 @@ procedure Lab5 is
       Zh: Vector_H;
    begin
       Put_Line("Task T6 is started");
+
       -- Введення F
+      Put_Line("T6: Initializing F");
       F := Fill_Vector;
+      Put_Line("T6: F initialized");
+
       -- Передати дані задачі T4: F2H
+      Put_Line("T6: Sending F2h_fromT6 to T4");
       T4.F2h_fromT6(F(1..2*H));
+      Put_Line("T6: Sent F2h_fromT6 to T4");
+
       -- Прийняти дані від задачі T4: MA, XH
+      Put_Line("T6: Waiting for MAXh_fromT4");
       accept MAXh_fromT4(MA_IN: in Matrix_N; Xh_IN: in Vector_H) do
          MA := MA_IN;
          Xh := Xh_IN;
       end MAXh_fromT4;
+      Put_Line("T6: Received MAXh_fromT4");
+
       -- Передати дані задачі T5: F3H
+      Put_Line("T6: Sending F3h_fromT6 to T5");
       T5.F3h_fromT6(F(1..3*H));
+      Put_Line("T6: Sent F3h_fromT6 to T5");
+
       -- Прийняти дані від задачі T5: MA, MSH
+      Put_Line("T6: Waiting for MAMSh_fromT5");
       accept MAMSh_fromT5(MA_IN: in Matrix_N; MSh_IN: in Matrix_H) do
          MA := MA_IN;
          MSh := MSh_IN;
       end MAMSh_fromT5;
+      Put_Line("T6: Received MAMSh_fromT5");
+
       -- Обчислення1: a6 = min(XН)
-      --  a6 := Find_Min(Xh);
+      Put_Line("T6: Calculating a6 = min(XH)");
+      a6 := Find_Min(Xh);
+      Put_Line("T6: a6 calculated: " & Integer'Image(a6));
+
       -- Передати a6 дані задачі T4
-      --  T4.a6_fromT6(a6);
+      Put_Line("T6: Sending a6 to T4");
+      T4.a6_fromT6(a6);
+      Put_Line("T6: Sent a6 to T4");
+
       -- Прийняти a від задачі T4
-      --  accept a_fromT4(a_IN: in Integer) do
-      --     a := a_IN;
-      --  end a_fromT4;
+      Put_Line("T6: Waiting for a_fromT4");
+      accept a_fromT4(a_IN: in Integer) do
+         a := a_IN;
+      end a_fromT4;
+      Put_Line("T6: Received a_fromT4: " & Integer'Image(a));
+
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
-      --  Zh := Calculate_Zh(Xh, MA, MSh, a, F(1..H));
+      Put_Line("T6: Calculating Zh");
+      Zh := Calculate_Zh(Xh, MA, MSh, a, F(1..H));
+      Put_Line("T6: Zh calculated");
+
       -- Передати Zh задачі T5
-      --  T5.Zh_fromT6(Zh);
+      Put_Line("T6: Sending Zh to T5");
+      T5.Zh_fromT6(Zh);
+      Put_Line("T6: Sent Zh to T5");
+
       Put_Line("Task T6 is finished");
    end T6;
 
