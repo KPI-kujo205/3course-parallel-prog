@@ -17,7 +17,7 @@ with Ada.Text_IO, Ada.Integer_Text_IO, Ada.Real_Time;
 use Ada.Text_IO, Ada.Integer_Text_IO, Ada.Real_Time;
 
 procedure Lab5 is
-   N: Integer := 12;  -- Розмір векторів і квадратних матриць
+   N: Integer := 24;  -- Розмір векторів і квадратних матриць
    P: Integer := 6;   -- Кількість процесорів
    H: Integer := N/P; -- Розмір підвектора і кількість стовпців підматриці
 
@@ -225,10 +225,22 @@ procedure Lab5 is
       end a_fromT3;
       Put_Line("T1: Received a_fromT3: " & Integer'Image(a));
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * FН
+      Put_Line("X3h'First = " & Integer'Image(X3h'First) & ", X3h'Last = " & Integer'Image(X3h'Last));
+      Put_Line("MA'First = " & Integer'Image(MA'First) & ", MA'Last = " & Integer'Image(MA'Last));
+      Put_Line("MS2h'First = " & Integer'Image(MS2h'First) & ", MS2h'Last = " & Integer'Image(MS2h'Last));
+      Put_Line("a = " & Integer'Image(a));
+      Put_Line("Fh'First = " & Integer'Image(Fh'First) & ", Fh'Last = " & Integer'Image(Fh'Last));
+      
       Put_Line("T1: Calculating Z(1..H)");
-      Z(1..H) := Calculate_Zh(X3h(1..H), MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh);
-      Put_Line("T1: Z(1..H) calculated");
+      declare
+         X_temp: Vector_N := (others => 0);
+      begin
+         for I in 1..H loop
+            X_temp(I) := X3h(I);
+         end loop;
+         Z(1..H) := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh);
+      end;
+      Put_Line("T1: Finish calculating Z(1..H)");
 
       -- Прийняти Z4H від задачі T3
       Put_Line("T1: Waiting for Z4h_fromT3");
