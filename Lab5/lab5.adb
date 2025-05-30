@@ -256,6 +256,33 @@ procedure Lab5 is
       end Zh_fromT2;
       Put_Line("T1: Received Zh_fromT2");
 
+      -- Debug prints
+      Put_Line("Debug: Z(1..H) values:");
+      for I in 1..H loop
+         Put(Integer'Image(Z(I)));
+      end loop;
+      Put_Line("");
+
+      Put_Line("Debug: Z4h values:");
+      for I in 1..4*H loop
+         Put(Integer'Image(Z4h(I)));
+      end loop;
+      Put_Line("");
+
+      Put_Line("Debug: Zh values:");
+      for I in 1..H loop
+         Put(Integer'Image(Zh(I)));
+      end loop;
+      Put_Line("");
+
+      -- Об'єднання всіх векторів у Z
+      Z(1..H) := Z(1..H);           -- Перші H елементів (вже обчислені)
+      Z(H+1..2*H) := Z4h(1..H);     -- Наступні H елементів з Z4h
+      Z(2*H+1..3*H) := Z4h(H+1..2*H); -- Наступні H елементів з Z4h
+      Z(3*H+1..4*H) := Z4h(2*H+1..3*H); -- Наступні H елементів з Z4h
+      Z(4*H+1..5*H) := Z4h(3*H+1..4*H); -- Наступні H елементів з Z4h
+      Z(5*H+1..6*H) := Zh;          -- Останні H елементів з Zh
+
       -- Виведення Z
       Put_Line("Result vector Z:");
       for I in 1..N loop
@@ -343,6 +370,7 @@ procedure Lab5 is
       a3, a1, a5, a: Integer;
       Z2h: Vector_2H;
       Zh: Vector_H;
+      Zh_T3: Vector_H;
    begin
       Put_Line("Task T3 is started");
 
@@ -432,7 +460,14 @@ procedure Lab5 is
 
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
       Put_Line("T3: Calculating Zh");
-      Zh := Calculate_Zh(X2h, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H));
+      declare
+         X_temp: Vector_N := (others => 0);
+      begin
+         for I in X2h'Range loop
+            X_temp(I) := X2h(I);
+         end loop;
+         Zh_T3 := Calculate_Zh(X_temp, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H));
+      end;
       Put_Line("T3: Zh calculated");
 
       -- Прийняти Z2H від задачі T5
@@ -451,7 +486,7 @@ procedure Lab5 is
 
       -- Передати Z4H задачі T1
       Put_Line("T3: Sending Z4h_fromT3 to T1");
-      T1.Z4h_fromT3((Z2h & Zh));
+      T1.Z4h_fromT3((Z2h & Zh & Zh_T3));
       Put_Line("T3: Sent Z4h_fromT3 to T1");
 
       Put_Line("Task T3 is finished");
@@ -554,7 +589,14 @@ procedure Lab5 is
 
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
       Put_Line("T4: Calculating Zh");
-      Zh := Calculate_Zh(X2h, MA, MSh, a, F2h(1..H));
+      declare
+         X_temp: Vector_N := (others => 0);
+      begin
+         for I in X2h'Range loop
+            X_temp(I) := X2h(I);
+         end loop;
+         Zh := Calculate_Zh(X_temp, MA, MSh, a, F2h(1..H));
+      end;
       Put_Line("T4: Zh calculated");
 
       -- Передати Zh задачі T3
@@ -620,7 +662,14 @@ procedure Lab5 is
 
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
       Put_Line("T5: Calculating Zh");
-      Zh := Calculate_Zh(Xh, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H));
+      declare
+         X_temp: Vector_N := (others => 0);
+      begin
+         for I in Xh'Range loop
+            X_temp(I) := Xh(I);
+         end loop;
+         Zh := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H));
+      end;
       Put_Line("T5: Zh calculated");
 
       -- Прийняти Zh від задачі T6
@@ -698,7 +747,14 @@ procedure Lab5 is
 
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
       Put_Line("T6: Calculating Zh");
-      Zh := Calculate_Zh(Xh, MA, MSh, a, F(1..H));
+      declare
+         X_temp: Vector_N := (others => 0);
+      begin
+         for I in Xh'Range loop
+            X_temp(I) := Xh(I);
+         end loop;
+         Zh := Calculate_Zh(X_temp, MA, MSh, a, F(1..H));
+      end;
       Put_Line("T6: Zh calculated");
 
       -- Передати Zh задачі T5
