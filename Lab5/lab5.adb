@@ -71,14 +71,33 @@ procedure Lab5 is
       return Min_Value;
    end Find_Min;
 
-   function Multiply_Vector_Matrix(Vector: Vector_N; Matrix: Matrix_H) return Vector_H is
+   function Multiply_Vector_Matrix(Vector: Vector_N; Matrix: Matrix_H; Task_Num: Integer) return Vector_H is
       Result: Vector_H := (others => 0);
    begin
+      Put_Line("T" & Integer'Image(Task_Num) & ": Multiply_Vector_Matrix input:");
+      Put_Line("T" & Integer'Image(Task_Num) & ": Vector values:");
+      for I in 1..N loop
+         Put(Integer'Image(Vector(I)));
+      end loop;
+      Put_Line("");
+      Put_Line("T" & Integer'Image(Task_Num) & ": Matrix first row:");
+      for J in 1..H loop
+         Put(Integer'Image(Matrix(1)(J)));
+      end loop;
+      Put_Line("");
+
       for I in 1..H loop
          for J in 1..N loop
             Result(I) := Result(I) + (Vector(J) * Matrix(J)(I));
          end loop;
       end loop;
+
+      Put_Line("T" & Integer'Image(Task_Num) & ": Multiply_Vector_Matrix result:");
+      for I in 1..H loop
+         Put(Integer'Image(Result(I)));
+      end loop;
+      Put_Line("");
+
       return Result;
    end Multiply_Vector_Matrix;
 
@@ -95,19 +114,28 @@ procedure Lab5 is
       return Result;
    end Multiply_Matrices;
 
-   function Calculate_Zh(X: Vector_N; MA: Matrix_N; MSh: Matrix_H; a: Integer; Fh: Vector_H) return Vector_H is
+   function Calculate_Zh(X: Vector_N; MA: Matrix_N; MSh: Matrix_H; a: Integer; Fh: Vector_H; Task_Num: Integer) return Vector_H is
       Result: Vector_H;
       MAMSh: Matrix_H;
       XMAMSh: Vector_H;
    begin
       -- MA * MSh
       MAMSh := Multiply_Matrices(MA, MSh);
+
       -- X * (MA * MSh)
-      XMAMSh := Multiply_Vector_Matrix(X, MAMSh);
+      XMAMSh := Multiply_Vector_Matrix(X, MAMSh, Task_Num);
+
       -- X * (MA * MSh) + a * Fh
       for I in 1..H loop
          Result(I) := XMAMSh(I) + (a * Fh(I));
       end loop;
+
+      Put_Line("T" & Integer'Image(Task_Num) & ": Final result:");
+      for I in 1..H loop
+         Put(Integer'Image(Result(I)));
+      end loop;
+      Put_Line("");
+
       return Result;
    end Calculate_Zh;
 
@@ -238,7 +266,7 @@ procedure Lab5 is
          for I in 1..H loop
             X_temp(I) := X3h(I);
          end loop;
-         Z(1..H) := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh);
+         Z(1..H) := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, Fh, 1);
       end;
       Put_Line("T1: Finish calculating Z(1..H)");
 
@@ -351,7 +379,7 @@ procedure Lab5 is
 
       -- Обчислення3: Zh = X * (MA * MSh) + a * Fh
       Put_Line("T2: Calculating Zh");
-      Zh := Calculate_Zh(X, MA, MSh, a, Fh);
+      Zh := Calculate_Zh(X, MA, MSh, a, Fh, 2);
       Put_Line("T2: Zh calculated");
 
       -- Передати Zh задачі T1
@@ -466,7 +494,7 @@ procedure Lab5 is
          for I in X2h'Range loop
             X_temp(I) := X2h(I);
          end loop;
-         Zh_T3 := Calculate_Zh(X_temp, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H));
+         Zh_T3 := Calculate_Zh(X_temp, MA, (for I in 1..N => MS(I)(1..H)), a, F2h(1..H), 3);
       end;
       Put_Line("T3: Zh calculated");
 
@@ -595,7 +623,7 @@ procedure Lab5 is
          for I in X2h'Range loop
             X_temp(I) := X2h(I);
          end loop;
-         Zh := Calculate_Zh(X_temp, MA, MSh, a, F2h(1..H));
+         Zh := Calculate_Zh(X_temp, MA, MSh, a, F2h(1..H), 4);
       end;
       Put_Line("T4: Zh calculated");
 
@@ -668,7 +696,7 @@ procedure Lab5 is
          for I in Xh'Range loop
             X_temp(I) := Xh(I);
          end loop;
-         Zh := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H));
+         Zh := Calculate_Zh(X_temp, MA, (for I in 1..N => MS2h(I)(1..H)), a, F3h(1..H), 5);
       end;
       Put_Line("T5: Zh calculated");
 
@@ -753,7 +781,7 @@ procedure Lab5 is
          for I in Xh'Range loop
             X_temp(I) := Xh(I);
          end loop;
-         Zh := Calculate_Zh(X_temp, MA, MSh, a, F(1..H));
+         Zh := Calculate_Zh(X_temp, MA, MSh, a, F(1..H), 6);
       end;
       Put_Line("T6: Zh calculated");
 
