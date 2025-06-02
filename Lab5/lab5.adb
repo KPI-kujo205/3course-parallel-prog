@@ -24,6 +24,7 @@ procedure Lab5 is
 
    Start_Time, End_Time: Time;
    Elapsed_Time: Time_Span;
+   Current_Time: Time;
 
    -- Формування типів
    type Vector_General is array(Integer range <>) of Integer;
@@ -125,7 +126,8 @@ procedure Lab5 is
    task T1 is
       pragma Storage_Size(2_147_483_648);
       entry X3h_fromT2(X3h_IN: in Vector_3H; X_IN: in Vector_N);
-      entry MS2hFh_fromT3(MS2h_IN: in Matrix_2H; F_IN: in Vector_N);
+      entry MS2h_fromT3(MS2h_IN: in Matrix_2H);
+      entry Fh_fromT3(F_IN: in Vector_N);
       entry a_fromT3(a_IN: in Integer);
       entry Zh_fromT2(Zh_IN: in Vector_H);
       entry Z4h_fromT3(Z4h_IN: in Vector_4H);
@@ -157,6 +159,7 @@ procedure Lab5 is
       entry a2_fromT2(a2_IN: in Integer);
       entry a6_fromT6(a6_IN: in Integer);
       entry a3_fromT3(a3_IN: in Integer);
+      entry a_fromT4(a_IN: in Integer);
    end T4;
 
    task T5 is
@@ -189,17 +192,21 @@ procedure Lab5 is
       -- Введення MA
       MA := Fill_Matrix;
 
+      -- Прийняти дані від задачі T3: F
+      accept Fh_fromT3(F_IN: in Vector_N) do
+         F := F_IN;
+      end Fh_fromT3;
+
+      -- Прийняти дані від задачі T3: MS2Н
+      accept MS2h_fromT3(MS2h_IN: in Matrix_2H) do
+         MS2h := MS2h_IN;
+      end MS2h_fromT3;
+
       -- Прийняти дані від задачі T2: X3H, X
       accept X3h_fromT2(X3h_IN: in Vector_3H; X_IN: in Vector_N) do
          X3h := X3h_IN;
          X := X_IN;
       end X3h_fromT2;
-      
-      -- Прийняти дані від задачі T3: MS2Н, F
-      accept MS2hFh_fromT3(MS2h_IN: in Matrix_2H; F_IN: in Vector_N) do
-         MS2h := MS2h_IN;
-         F := F_IN;
-      end MS2hFh_fromT3;
 
       -- Передати дані задачі T2: MA, MSН
       T2.MAMSh_fromT1(MA, (for I in 1..N => MS2h(I)(1..H)));
@@ -245,6 +252,12 @@ procedure Lab5 is
          Put(Integer'Image(Z(I)));
       end loop;
       Put_Line("");
+
+      -- Record end time and calculate elapsed time
+      End_Time := Clock;
+      Elapsed_Time := End_Time - Start_Time;
+      Put_Line("Calculation finished");
+      Put_Line("Total execution time: " & Duration'Image(To_Duration(Elapsed_Time)) & " seconds");
    end T1;
 
    task body T2 is
@@ -258,6 +271,11 @@ procedure Lab5 is
       -- Введення X
       X := Fill_Vector;
 
+      -- Прийняти дані від задачі T4: FH
+      accept Fh_fromT4(F_IN: in Vector_N) do
+         F := F_IN;
+      end Fh_fromT4;
+
       -- Передати дані задачі T1: X3H, X
       T1.X3h_fromT2(X(1..3*H), X);
 
@@ -266,11 +284,6 @@ procedure Lab5 is
          MA := MA_IN;
          MSh := MSh_IN;
       end MAMSh_fromT1;
-
-      -- Прийняти дані від задачі T4: F
-      accept Fh_fromT4(F_IN: in Vector_N) do
-         F := F_IN;
-      end Fh_fromT4;
 
       -- Передати дані задачі T4: X2H, X, MA
       T4.MAX2h_fromT2(MA, X(1..2*H), X);
@@ -286,10 +299,10 @@ procedure Lab5 is
          a := a_IN;
       end a_fromT4;
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * F
+      -- Обчислення3: ZН = X * (MA * MSН) + a * FH
       Zh := Calculate_Zh(X, MA, MSh, a, F(1..H), 2);
 
-      -- Передати Zh задачі T1
+      -- Передати ZH задачі T1
       T1.Zh_fromT2(Zh);
    end T2;
 
@@ -307,13 +320,16 @@ procedure Lab5 is
       -- Введення MS
       MS := Fill_Matrix;
       
-      -- Прийняти дані від задачі T5: F
+      -- Прийняти дані від задачі T5: F2H
       accept F2h_fromT5(F_IN: in Vector_N) do
          F := F_IN;
       end F2h_fromT5;
 
-      -- Передати дані задачі T1: MS2Н, F
-      T1.MS2hFh_fromT3((for I in 1..N => MS(I)(1..2*H)), F);
+      -- Передати дані задачі T1: FH
+      T1.Fh_fromT3(F);
+
+      -- Передати дані задачі T1: MS2Н
+      T1.MS2h_fromT3((for I in 1..N => MS(I)(1..2*H)));
 
       -- Прийняти дані від задачі T1: MA, X2H, X
       accept MAX2h_fromT1(MA_IN: in Matrix_N; X2h_IN: in Vector_2H; X_IN: in Vector_N) do
@@ -361,7 +377,7 @@ procedure Lab5 is
       -- Передати a задачі T5
       T5.a_fromT3(a);
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * F
+      -- Обчислення3: ZН = X * (MA * MSН) + a * FH
       Zh_T3 := Calculate_Zh(X, MA, (for I in 1..N => MS(I)(1..H)), a, F(1..H), 3);
 
       -- Прийняти Z2H від задачі T5
@@ -387,7 +403,12 @@ procedure Lab5 is
       a4, a2, a6, a3, a: Integer;
       Zh: Vector_H;
    begin
-      -- Передати дані задачі T2: F
+      -- Прийняти дані від задачі T6: F2H
+      accept F2h_fromT6(F_IN: in Vector_N) do
+         F := F_IN;
+      end F2h_fromT6;
+
+      -- Передати дані задачі T2: FH
       T2.Fh_fromT4(F);
 
       -- Прийняти дані від задачі T2: MA, X2H, X
@@ -402,12 +423,7 @@ procedure Lab5 is
          MSh := MSh_IN;
       end MSh_fromT3;
 
-      -- Прийняти дані від задачі T6: F
-      accept F2h_fromT6(F_IN: in Vector_N) do
-         F := F_IN;
-      end F2h_fromT6;
-
-      -- Передати дані задачі T6: XH, X
+      -- Передати дані задачі T6: XH
       T6.MAXh_fromT4(MA, X2h(1..H), X);
 
       -- Обчислення1: a4 = min(XН)
@@ -446,10 +462,10 @@ procedure Lab5 is
       -- Передати a задачі T6
       T6.a_fromT4(a);
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * F
+      -- Обчислення3: ZН = X * (MA * MSН) + a * FH
       Zh := Calculate_Zh(X, MA, MSh, a, F(1..H), 4);
 
-      -- Передати Zh задачі T3
+      -- Передати ZH задачі T3
       T3.Zh_fromT4(Zh);
    end T4;
 
@@ -462,7 +478,12 @@ procedure Lab5 is
       a5, a: Integer;
       Zh: Vector_H;
    begin
-      -- Передати дані задачі T3: F
+      -- Прийняти дані від задачі T6: F3H
+      accept F3h_fromT6(F_IN: in Vector_N) do
+         F := F_IN;
+      end F3h_fromT6;
+
+      -- Передати дані задачі T3: F2H
       T3.F2h_fromT5(F);
 
       -- Прийняти дані від задачі T3: MA, MS2H, XH, X
@@ -472,11 +493,6 @@ procedure Lab5 is
          Xh := Xh_IN;
          X := X_IN;
       end MAMS2hXh_fromT3;
-
-      -- Прийняти дані від задачі T6: F
-      accept F3h_fromT6(F_IN: in Vector_N) do
-         F := F_IN;
-      end F3h_fromT6;
 
       -- Передати дані задачі T6: MSH, MA
       T6.MAMSh_fromT5(MA, (for I in 1..N => MS2h(I)(1..H)));
@@ -492,10 +508,10 @@ procedure Lab5 is
          a := a_IN;
       end a_fromT3;
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * F
+      -- Обчислення3: ZН = X * (MA * MSН) + a * FH
       Zh := Calculate_Zh(X, MA, (for I in 1..N => MS2h(I)(1..H)), a, F(1..H), 5);
 
-      -- Прийняти Zh від задачі T6
+      -- Прийняти ZН від задачі T6
       accept Zh_fromT6(Zh_IN: in Vector_H) do
          Zh := Zh_IN;
       end Zh_fromT6;
@@ -516,8 +532,11 @@ procedure Lab5 is
       -- Введення F
       F := Fill_Vector;
 
-      -- Передати дані задачі T4: F
+      -- Передати дані задачі T4: F2H
       T4.F2h_fromT6(F);
+
+      -- Передати дані задачі T5: F3H
+      T5.F3h_fromT6(F);
 
       -- Прийняти дані від задачі T4: MA, XH, X
       accept MAXh_fromT4(MA_IN: in Matrix_N; Xh_IN: in Vector_H; X_IN: in Vector_N) do
@@ -525,9 +544,6 @@ procedure Lab5 is
          Xh := Xh_IN;
          X := X_IN;
       end MAXh_fromT4;
-
-      -- Передати дані задачі T5: F
-      T5.F3h_fromT6(F);
 
       -- Прийняти дані від задачі T5: MA, MSH
       accept MAMSh_fromT5(MA_IN: in Matrix_N; MSh_IN: in Matrix_H) do
@@ -546,15 +562,22 @@ procedure Lab5 is
          a := a_IN;
       end a_fromT4;
 
-      -- Обчислення3: ZН = X * (MA * MSН) + a * F
+      -- Обчислення3: ZН = X * (MA * MSН) + a * FH
       Zh := Calculate_Zh(X, MA, MSh, a, F(1..H), 6);
 
-      -- Передати Zh задачі T5
+      -- Передати ZН задачі T5
       T5.Zh_fromT6(Zh);
    end T6;
 
 begin
    Start_Time := Clock;
    Put_Line("Lab5 is started");
+   Put_Line("Start time: 0.0 seconds");
+
+   -- Wait for all tasks to complete
+   null;
+
+   End_Time := Clock;
+   Elapsed_Time := End_Time - Start_Time;
 
 end Lab5;
