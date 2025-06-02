@@ -18,7 +18,7 @@ use Ada.Text_IO, Ada.Integer_Text_IO, Ada.Real_Time;
 
 
 procedure Lab5 is
-   N: Integer := 24;  -- Розмір векторів і квадратних матриць
+   N: Integer := 600;  -- Розмір векторів і квадратних матриць
    P: Integer := 6;   -- Кількість процесорів
    H: Integer := N/P; -- Розмір підвектора і кількість стовпців підматриці
 
@@ -257,7 +257,7 @@ procedure Lab5 is
       End_Time := Clock;
       Elapsed_Time := End_Time - Start_Time;
       Put_Line("Calculation finished");
-      Put_Line("Total execution time: " & Duration'Image(To_Duration(Elapsed_Time)) & " seconds");
+      Put_Line("Total execution time: " & Integer'Image(Integer(To_Duration(Elapsed_Time) * 1000.0)) & " milliseconds");
    end T1;
 
    task body T2 is
@@ -572,12 +572,5 @@ procedure Lab5 is
 begin
    Start_Time := Clock;
    Put_Line("Lab5 is started");
-   Put_Line("Start time: 0.0 seconds");
-
-   -- Wait for all tasks to complete
-   null;
-
-   End_Time := Clock;
-   Elapsed_Time := End_Time - Start_Time;
-
+   Put_Line("Start time: 0 milliseconds");
 end Lab5;

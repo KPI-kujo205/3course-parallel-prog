@@ -2,4 +2,4 @@ version: "3.8"
 services:
   ada-app:
     build: .
-    container_name: ada-runner
+    container_name: ada-runner-1cpu
